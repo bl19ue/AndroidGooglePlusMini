@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MiniPlusGoogle</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    
+    <string-array name="nav_drawer_items">
+        <item>My profile</item>
+        <item>Circles</item>
+    </string-array>
+
+    <array name="nav_drawer_icons">
+        <item>@drawable/profile</item>
+        <item>@drawable/circles</item>
+    </array>
+</resources>

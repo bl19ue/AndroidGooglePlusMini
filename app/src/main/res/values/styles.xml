@@ -1,0 +1,9 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
+    </style>
+    <color name="list_background">#000000</color>
+    <color name="list_divider">#FFFFFF</color>
+</resources>
