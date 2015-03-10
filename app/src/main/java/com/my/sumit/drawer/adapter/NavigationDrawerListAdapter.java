@@ -58,3 +58,15 @@ public class NavigationDrawerListAdapter extends BaseAdapter{
         return convertView;
     }
 }
+
+// Until now we are done creating all the required layouts, model and adapter class for
+// navigation drawer. It’s time to move on to our MainActivity.java and start implementing
+// the navigation drawer.
+
+/*Following are the major steps we need take care of in the main activity.
+
+        > Creating a NavDrawerListAdapter instance and adding list items.
+        > Assigning the adapter to Navigation Drawer ListView
+        > Creating click event listener for list items
+        > Creating and displaying fragment activities on selecting list item.
+*/
