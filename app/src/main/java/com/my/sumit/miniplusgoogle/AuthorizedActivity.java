@@ -1,5 +1,7 @@
 package com.my.sumit.miniplusgoogle;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.support.v4.widget.DrawerLayout;
@@ -7,9 +9,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.my.sumit.drawer.adapter.NavigationDrawerListAdapter;
@@ -63,7 +67,8 @@ public class AuthorizedActivity extends ActionBarActivity {
         //Recycle typed array
         menuIcons.recycle();
 
-        
+        //Creating a click listener on the sliding drawer
+        drawerList.setOnItemClickListener(new SlideMenuClickListener());
 
         //Setting drawer list adapter
         naviDrawerListAdapter = new NavigationDrawerListAdapter(getApplicationContext(),
@@ -102,6 +107,51 @@ public class AuthorizedActivity extends ActionBarActivity {
 
     }
 
+    //Slide Menu item click listener
+    private class SlideMenuClickListener implements ListView.OnItemClickListener{
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+                                long id) {
+            // display view for selected nav drawer item
+            displayView(position);
+        }
+    }
+
+    //Displaying fragment view for selected item in the drawer
+    private void displayView(int position){
+        //Update content by replacing fragments
+        Fragment fragment = null;
+        switch (position){
+            case 0: {
+                fragment = new ProfileFragment();
+                break;
+            }
+            default:{
+                fragment = new ProfileFragment();
+                break;
+            }
+        }
+
+
+        if(fragment != null){
+
+            //Getting activity's fragment manager
+            FragmentManager fragmentManager = getFragmentManager();
+
+            //Replacing the frame container with our new fragment and commiting it.
+            fragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit();
+
+            //Updating the selected item and title, and then closing the drawer
+            drawerList.setItemChecked(position, true);
+            drawerList.setSelection(position);
+            setTitle(menuTitles[position]);
+            drawerLayout.closeDrawer(drawerList);
+        }
+        else{
+            //error, could not even get a fragment
+            Log.e("AuthorizedActivity", "Error in creating fragment");
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
