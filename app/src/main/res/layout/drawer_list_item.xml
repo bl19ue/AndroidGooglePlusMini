@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:background="#E4E4">
+    android:layout_height="50dp"
+    android:background="#E0E0E0">
     
     <ImageView
         android:id="@+id/icon"
         android:layout_width="25dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
@@ -23,7 +23,7 @@
         android:layout_toRightOf="@id/icon"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
-        android:textColor="#FFFFFF"
+        android:textColor="#37474F"
         android:gravity="center_vertical"
         android:paddingRight="40dp"
         android:textSize="20sp"/>

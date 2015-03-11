@@ -59,8 +59,11 @@ public class AuthorizedActivity extends ActionBarActivity {
             navDrawerItems.add(new NavigationDrawerItem(menuTitles[i], menuIcons.getResourceId(i, -1)));
         }
 
+
         //Recycle typed array
         menuIcons.recycle();
+
+        
 
         //Setting drawer list adapter
         naviDrawerListAdapter = new NavigationDrawerListAdapter(getApplicationContext(),

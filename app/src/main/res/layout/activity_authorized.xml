@@ -21,5 +21,6 @@
         android:dividerHeight="1dp"
         android:background="@color/list_background"
         android:layout_gravity="left"
+        android:elevation="50dp"
         />
 </android.support.v4.widget.DrawerLayout>
