@@ -1,17 +1,19 @@
 package com.my.sumit.drawer.model;
 
+import android.graphics.drawable.Drawable;
+
 public class NavigationDrawerItem {
     private String title;
-    private int icon;
+    private Drawable icon;
 
     public NavigationDrawerItem(){}
 
-    public NavigationDrawerItem(String title, int icon){
+    public NavigationDrawerItem(String title, Drawable icon){
         this.title = title;
         this.icon = icon;
     }
 
-    public int getIcon() {
+    public Drawable getIcon() {
         return icon;
     }
 
@@ -23,7 +25,7 @@ public class NavigationDrawerItem {
         this.title = title;
     }
 
-    public void setIcon(int icon) {
+    public void setIcon(Drawable icon) {
         this.icon = icon;
     }
 }

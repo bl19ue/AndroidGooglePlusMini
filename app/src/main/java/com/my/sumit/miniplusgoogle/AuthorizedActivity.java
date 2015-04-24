@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.os.AsyncTask;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -16,17 +17,30 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.api.services.plusDomains.PlusDomains;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.api.services.plusDomains.model.Circle;
+import com.google.api.services.plusDomains.model.CircleFeed;
+import com.google.api.services.plusDomains.model.Person;
 import com.my.sumit.drawer.adapter.NavigationDrawerListAdapter;
 import com.my.sumit.drawer.model.NavigationDrawerItem;
+import com.my.sumit.models.CurrentCircle;
+import com.my.sumit.models.CurrentUser;
+import com.my.sumit.singleton.MyPlusDomainAPI;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class AuthorizedActivity extends ActionBarActivity {
+public class AuthorizedActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private String TAG = "my_google_plus_mini";
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
+    private Fragment fragment = null;
 
     //Navigation Drawer Title
     private CharSequence drawerTitle;
@@ -40,11 +54,24 @@ public class AuthorizedActivity extends ActionBarActivity {
 
     private ArrayList<NavigationDrawerItem> navDrawerItems;
     private NavigationDrawerListAdapter naviDrawerListAdapter;
+
+    private PlusDomains plusDomainsApi;
+    private CurrentUser currentUserObject;
+    private Person user = null;
+    private List<Circle> circles = null;
+    private CurrentCircle myCircles = null;
+    private PlusDomains.Circles.List listCircles = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authorized);
 
+        plusDomainsApi = MyPlusDomainAPI.getPlusDomains();
+        if(currentUserObject == null) {
+            new RetrievePerson().execute();
+        }
+        new RetrieveCircle().execute();
         title = drawerTitle = getTitle();
 
         //Load slide menu items
@@ -59,8 +86,8 @@ public class AuthorizedActivity extends ActionBarActivity {
         navDrawerItems = new ArrayList<NavigationDrawerItem>();
 
         //For adding each item in the drawer
-        for(int i=0;i<menuTitles.length;i++){
-            navDrawerItems.add(new NavigationDrawerItem(menuTitles[i], menuIcons.getResourceId(i, -1)));
+        for(int i = 0; i < menuTitles.length; i++){
+            navDrawerItems.add(new NavigationDrawerItem(menuTitles[i], menuIcons.getDrawable(i)));
         }
 
 
@@ -100,10 +127,107 @@ public class AuthorizedActivity extends ActionBarActivity {
         };
         drawerLayout.setDrawerListener(drawerToggle);
 
-        if(savedInstanceState == null){
-            //When the user opens the app for the first time, show list 0
-            //-> Call displayView in MainActivity
+
+
+        /*
+        fragment = new ProfileFragment();
+        attachFragment(0);
+        */
+        //new RetrievePerson().execute();
+    }
+
+    private class RetrievePerson extends AsyncTask<Void, Void, Person> {
+
+        @Override
+        protected Person doInBackground(Void... params) {
+            try {
+                // To Get User Profile
+                user = plusDomainsApi.people().get("me").execute();
+                Log.i(TAG, "User Name : " + user.getDisplayName());
+                Log.i(TAG,"Image URL : " + user.getImage().getUrl());
+
+                /*
+                // To Get Circle Feed
+                listCircles = plusDomainsApi.circles().list("me");
+                listCircles.setMaxResults(5L);
+                CircleFeed circleFeed = listCircles.execute();
+                List<Circle> circles = circleFeed.getItems();
+
+                // Loop until no additional pages of results are available.
+                for (Circle circle : circles) {
+                    System.out.println(circle.getDisplayName());
+                    Log.i(TAG,"Circle Id : " + circle.getId());
+                }
+                */
+            } catch (IOException e) {
+                System.out.println("User Name Excep : ");
+                e.printStackTrace();
+            }
+            return user;
         }
+
+        @Override
+        protected void onPostExecute(Person user) {
+            super.onPostExecute(user);
+            Log.i(TAG,"User::" + user.getName());
+
+            currentUserObject = new CurrentUser(user.getDisplayName(),
+                    user.getAboutMe(), user.getImage().getUrl(),
+                    user.getOccupation(), user.getOrganizations().get(0).toString());
+
+            displayView(0);
+        }
+    }
+
+    private class RetrieveCircle extends AsyncTask<Void, Void, List<Circle>> {
+
+        @Override
+        protected List<Circle> doInBackground(Void... params) {
+            try {
+                listCircles = plusDomainsApi.circles().list("me");
+                listCircles.setMaxResults(5L);
+                CircleFeed circleFeed = listCircles.execute();
+                circles = circleFeed.getItems();
+
+                // Loop until no additional pages of results are available.
+                for (Circle circle : circles) {
+                    System.out.println(circle.getDisplayName());
+                    Log.i(TAG,"Circle Id : " + circle.getId());
+                }
+
+
+            } catch (IOException e) {
+                System.out.println("Circle Excep : ");
+                e.printStackTrace();
+            }
+            return circles;
+        }
+
+        @Override
+        protected void onPostExecute(List<Circle> circles) {
+            super.onPostExecute(circles);
+            Log.i(TAG,"circles::" + circles.get(0).getDisplayName());
+
+            myCircles = new CurrentCircle(circles);
+
+        }
+
+
+    }
+
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
 
@@ -120,10 +244,15 @@ public class AuthorizedActivity extends ActionBarActivity {
     //Displaying fragment view for selected item in the drawer
     private void displayView(int position){
         //Update content by replacing fragments
-        Fragment fragment = null;
+        fragment = null;
         switch (position){
             case 0: {
+
                 fragment = new ProfileFragment();
+                break;
+            }
+            case 1: {
+                fragment = new CirclesFragment();
                 break;
             }
             default:{
@@ -132,6 +261,11 @@ public class AuthorizedActivity extends ActionBarActivity {
             }
         }
 
+        attachFragment(position);
+
+    }
+
+    private void attachFragment(int position){
 
         if(fragment != null){
 
@@ -169,9 +303,9 @@ public class AuthorizedActivity extends ActionBarActivity {
                 item.getItemId() == R.id.action_settings){ //handle action bar clicks
             return true;
         }
-        else {
+
             return super.onOptionsItemSelected(item);
-        }
+
     }
 
     //Called when invalidOptionsMenu() is triggered
@@ -207,4 +341,9 @@ public class AuthorizedActivity extends ActionBarActivity {
         // Pass any configuration change to the drawer toggls
         drawerToggle.onConfigurationChanged(newConfig);
     }
+
+    public Person getMyPerson(){
+        return user;
+    }
+
 }

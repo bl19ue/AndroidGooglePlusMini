@@ -1,20 +1,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="com.my.sumit.miniplusgoogle.ProfileFragment">
+    android:layout_height="match_parent" tools:context="com.my.sumit.miniplusgoogle.FriendFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <ImageView
-            android:id="@+id/profile_image"
+            android:id="@+id/friend_image"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:elevation="60dp"/>
 
         <TextView
-            android:id="@+id/profile_name"
-            android:textSize="30sp"
+            android:id="@+id/friend_name"
+            android:textSize="40sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -22,7 +23,7 @@
             />
 
         <TextView
-            android:id="@+id/profile_occupation"
+            android:id="@+id/friend_occupation"
             android:textSize="20sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,7 +32,7 @@
             />
 
         <TextView
-            android:id="@+id/profile_organization"
+            android:id="@+id/friend_organization"
             android:textSize="20sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,15 +41,12 @@
             />
 
         <TextView
-            android:id="@+id/profile_about_me"
+            android:id="@+id/friend_about_me"
             android:textSize="20sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_gravity="center"
             />
-
-
     </LinearLayout>
-
 </FrameLayout>

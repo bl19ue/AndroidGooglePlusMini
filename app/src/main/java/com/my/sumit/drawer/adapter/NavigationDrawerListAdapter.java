@@ -9,10 +9,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.my.sumit.asyncimageloading.ImageLoader;
 import com.my.sumit.drawer.model.NavigationDrawerItem;
+import com.my.sumit.drawer.model.URLImageItem;
 import com.my.sumit.miniplusgoogle.R;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -20,20 +20,38 @@ import java.util.ArrayList;
 public class NavigationDrawerListAdapter extends BaseAdapter{
     private Context context;
     private ArrayList<NavigationDrawerItem> navigationDrawerItems;
+    private ArrayList<URLImageItem> urlImageItems = null;
+    public ImageLoader imageLoader;
 
     public NavigationDrawerListAdapter(Context context, ArrayList<NavigationDrawerItem> navigationDrawerItems){
         this.context = context;
         this.navigationDrawerItems = navigationDrawerItems;
     }
 
+    public NavigationDrawerListAdapter(Context context, ArrayList<URLImageItem> urlImageItems, boolean f){
+        this.context = context;
+        this.urlImageItems = urlImageItems;
+        imageLoader = new ImageLoader(context);
+    }
+
     @Override
     public int getCount() {
-        return navigationDrawerItems.size();
+        if(urlImageItems == null) {
+            return navigationDrawerItems.size();
+        }
+        else{
+            return urlImageItems.size();
+        }
     }
 
     @Override
     public Object getItem(int position) {
-        return navigationDrawerItems.get(position);
+        if(urlImageItems == null) {
+            return navigationDrawerItems.get(position);
+        }
+        else{
+            return urlImageItems.get(position);
+        }
     }
 
     @Override
@@ -52,8 +70,15 @@ public class NavigationDrawerListAdapter extends BaseAdapter{
         ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
         TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
 
-        imgIcon.setImageResource(navigationDrawerItems.get(position).getIcon());
-        txtTitle.setText(navigationDrawerItems.get(position).getTitle());
+        if(urlImageItems == null) {
+            imgIcon.setImageDrawable(navigationDrawerItems.get(position).getIcon());
+            txtTitle.setText(navigationDrawerItems.get(position).getTitle());
+        }
+        else{
+            imageLoader.DisplayImage(urlImageItems.get(position).getImageURL(), imgIcon);
+            txtTitle.setText(urlImageItems.get(position).getFriendName());
+        }
+
 
         return convertView;
     }
